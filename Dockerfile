@@ -7,7 +7,7 @@ WORKDIR /src
 RUN \
   apk --no-cache add git make && \
   cd /go/src && \
-  git clone --depth 1 --branch $KUBE_STATE_VERSION https://github.com/kubernetes/kube-state-metrics.git && \
+  git clone --depth 1 --branch ${KUBE_STATE_VERSION} https://github.com/kubernetes/kube-state-metrics.git && \
   cd /go/src/kube-state-metrics && \
   make build && \
   mv kube-state-metrics /src && \
