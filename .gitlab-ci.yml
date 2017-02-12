@@ -1,0 +1,26 @@
+stages:
+- build
+- deploy
+
+build_images:
+  type: build
+  script:
+  - docker build -t $CI_REGISTRY_IMAGE .
+  - docker push $CI_REGISTRY_IMAGE
+  - docker build -t $CI_REGISTRY_IMAGE:$CI_BUILD_TAG .
+  - docker push $CI_REGISTRY_IMAGE:$CI_BUILD_TAG
+  only:
+  - tags
+
+staging:
+  type: deploy
+  environment:
+    name: $CI_ENVIRONMENT_NAME
+  variables:
+    GIT_STRATEGY: none
+  script:
+  - kubectl config use-context ric-sandbox
+  - kubectl --namespace=monitoring set image deployment/kube-state-metrics kube-state-metrics=$CI_REGISTRY_IMAGE:$CI_BUILD_TAG
+  only:
+  - tags
+  when: manual
